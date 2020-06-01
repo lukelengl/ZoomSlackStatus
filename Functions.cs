@@ -68,9 +68,9 @@ namespace ZoomSlackStatus
             }
 
             dynamic getUserInfoResponseContent = JsonConvert.DeserializeObject(await getUserInfoResponse.Content.ReadAsStringAsync());
-            string accountId = getUserInfoResponseContent.account_id;
+            string userId = getUserInfoResponseContent.id;
 
-            return new RedirectResult($"https://slack.com/oauth/v2/authorize?user_scope=users.profile:read%20users.profile:write&client_id={Configuration.SlackClientId}&redirect_uri={Configuration.SlackAuthorizationSuccessUri}&state={accountId}");
+            return new RedirectResult($"https://slack.com/oauth/v2/authorize?user_scope=users.profile:read%20users.profile:write&client_id={Configuration.SlackClientId}&redirect_uri={Configuration.SlackAuthorizationSuccessUri}&state={userId}");
         }
 
         // After Slack authorization is successful, save the user's email and access token in Azure Table Storage.
@@ -189,10 +189,10 @@ namespace ZoomSlackStatus
             var insertUserResult = await userTable.ExecuteAsync(insertUserOperation);
         }
 
-        private async Task<User> GetUserAsync(string zoomUserAccountId)
+        private async Task<User> GetUserAsync(string zoomUserId)
         {
             var userTable = await GetUserTableAsync();
-            var getUserOperation = TableOperation.Retrieve<User>(zoomUserAccountId, zoomUserAccountId);
+            var getUserOperation = TableOperation.Retrieve<User>(zoomUserId, zoomUserId);
             var getResult = await userTable.ExecuteAsync(getUserOperation);
             return getResult.Result as User;
         }

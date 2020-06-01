@@ -8,14 +8,14 @@ namespace ZoomSlackStatus
 		{
 		}
 
-		public User(string zoomUserAccountId, string slackAccessToken, string email) : base(zoomUserAccountId, zoomUserAccountId)
+		public User(string zoomUserId, string slackAccessToken, string email) : base(zoomUserId, zoomUserId)
 		{
-            ZoomUserAccountId = zoomUserAccountId;
+            ZoomUserId = zoomUserId;
             SlackAccessToken = slackAccessToken;
             Email = email;
 		}
 
-        public string ZoomUserAccountId { get; set;}
+        public string ZoomUserId { get; set;}
         public string SlackAccessToken { get; set;}
         public string Email { get; set;}
 	}
