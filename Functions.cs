@@ -135,10 +135,10 @@ namespace ZoomSlackStatus
                 return InternalServerError();
             }
 
-            string accountId = body.payload.account_id;
+            string id = body.payload.@object.id;
             string presenceStatus = body.payload.@object.presence_status;
 
-            var user = await GetUserAsync(accountId);
+            var user = await GetUserAsync(id);
 
             var getUserResponse = await _httpClient.GetAsync($"https://slack.com/api/users.profile.get?token={user.SlackAccessToken}");
             if (!getUserResponse.IsSuccessStatusCode)
