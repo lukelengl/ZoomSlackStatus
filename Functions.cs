@@ -70,7 +70,7 @@ namespace ZoomSlackStatus
             dynamic getUserInfoResponseContent = JsonConvert.DeserializeObject(await getUserInfoResponse.Content.ReadAsStringAsync());
             string userId = getUserInfoResponseContent.id;
 
-            return new RedirectResult($"https://slack.com/oauth/v2/authorize?user_scope=users.profile:read%20users.profile:write&client_id={Configuration.SlackClientId}&redirect_uri={Configuration.SlackAuthorizationSuccessUri}&state={userId}");
+            return new RedirectResult($"https://slack.com/oauth/v2/authorize?user_scope=users.profile:read%20users.profile:write&client_id={Configuration.SlackClientId}&redirect_uri={Configuration.SlackAuthorizationSuccessUri}&state={userId.ToLower()}");
         }
 
         // After Slack authorization is successful, save the user's email and access token in Azure Table Storage.
@@ -128,6 +128,7 @@ namespace ZoomSlackStatus
             }
 
             dynamic body = JsonConvert.DeserializeObject(await req.ReadAsStringAsync());
+            log.LogInformation($"Event body: {body}");
             string @event = body.@event;
             if (@event != "user.presence_status_updated")
             {
@@ -138,7 +139,11 @@ namespace ZoomSlackStatus
             string id = body.payload.@object.id;
             string presenceStatus = body.payload.@object.presence_status;
 
-            var user = await GetUserAsync(id);
+            var user = await GetUserAsync(id.ToLower());
+            if (user == null) {
+                log.LogCritical($"User {id} not found");
+                return InternalServerError();
+            }
 
             var getUserResponse = await _httpClient.GetAsync($"https://slack.com/api/users.profile.get?token={user.SlackAccessToken}");
             if (!getUserResponse.IsSuccessStatusCode)
@@ -146,6 +151,9 @@ namespace ZoomSlackStatus
                 log.LogCritical($"Error getting user profile: {getUserResponse}");
                 return InternalServerError();
             }
+
+            log.LogInformation($"Current user status: {getUserResponse}");
+
             dynamic getUserResponseContent = JsonConvert.DeserializeObject(await getUserResponse.Content.ReadAsStringAsync());
             string currentStatusEmoji = getUserResponseContent.profile.status_emoji;
             string currentStatusText = getUserResponseContent.profile.status_text;
