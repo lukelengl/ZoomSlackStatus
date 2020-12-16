@@ -165,8 +165,8 @@ namespace ZoomSlackStatus
                 {
                     Profile = new Profile
                     {
-                        StatusEmoji = presenceStatus == "Do_Not_Disturb" ? Configuration.InAMeetingStatusEmoji : string.Empty,
-                        StatusText = presenceStatus == "Do_Not_Disturb" ? Configuration.InAMeetingStatusText : string.Empty
+                        StatusEmoji = IsBusy(presenceStatus) ? Configuration.InAMeetingStatusEmoji : string.Empty,
+                        StatusText = IsBusy(presenceStatus) ? Configuration.InAMeetingStatusText : string.Empty
                     }
                 };
 
@@ -183,6 +183,17 @@ namespace ZoomSlackStatus
             }
             
             return new OkResult();
+        }
+
+        private bool IsBusy(string presenceStatus)
+        {
+            switch(presenceStatus)
+            {
+                case "Do_Not_Disturb":
+                case "In_Meeting":
+                    return true;
+            }
+            return false;
         }
 
         private StatusCodeResult InternalServerError()
