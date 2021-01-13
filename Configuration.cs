@@ -15,5 +15,7 @@ namespace ZoomSlackStatus
         public static readonly string CloudStorageAccountConnectionString = Environment.GetEnvironmentVariable("CloudStorageAccountConnectionString");
         public static readonly string InAMeetingStatusEmoji = Environment.GetEnvironmentVariable("InAMeetingStatusEmoji");
         public static readonly string InAMeetingStatusText = Environment.GetEnvironmentVariable("InAMeetingStatusText");
+        public static readonly string PresentingStatusEmoji = Environment.GetEnvironmentVariable("PresentingStatusEmoji");
+        public static readonly string PresentingStatusText = Environment.GetEnvironmentVariable("PresentingStatusText");
     }
 }
