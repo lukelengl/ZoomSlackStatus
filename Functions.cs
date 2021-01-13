@@ -159,16 +159,29 @@ namespace ZoomSlackStatus
             string currentStatusText = getUserResponseContent.profile.status_text;
 
             if ((currentStatusEmoji == Configuration.InAMeetingStatusEmoji && currentStatusText == Configuration.InAMeetingStatusText)
+                || (currentStatusEmoji == Configuration.PresentingStatusEmoji && currentStatusText == Configuration.PresentingStatusText)
                 || (string.IsNullOrEmpty(currentStatusEmoji) && string.IsNullOrEmpty(currentStatusText)))
             {
                 var setUserProfile = new SetUserProfile
                 {
                     Profile = new Profile
                     {
-                        StatusEmoji = IsBusy(presenceStatus) ? Configuration.InAMeetingStatusEmoji : string.Empty,
-                        StatusText = IsBusy(presenceStatus) ? Configuration.InAMeetingStatusText : string.Empty
+                        StatusEmoji = string.Empty,
+                        StatusText = string.Empty
                     }
                 };
+
+                switch(presenceStatus) {
+                    case "Do_Not_Disturb":
+                    case "In_Meeting":
+                        setUserProfile.Profile.StatusEmoji = Configuration.InAMeetingStatusEmoji;
+                        setUserProfile.Profile.StatusText = Configuration.InAMeetingStatusText;
+                        break;
+                    case "Presenting":
+                        setUserProfile.Profile.StatusEmoji = Configuration.PresentingStatusEmoji;
+                        setUserProfile.Profile.StatusText = Configuration.PresentingStatusText;
+                        break;
+                }
 
                 var setUserRequest = new HttpRequestMessage(HttpMethod.Post, "https://slack.com/api/users.profile.set");
                 setUserRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", user.SlackAccessToken);
@@ -183,17 +196,6 @@ namespace ZoomSlackStatus
             }
             
             return new OkResult();
-        }
-
-        private bool IsBusy(string presenceStatus)
-        {
-            switch(presenceStatus)
-            {
-                case "Do_Not_Disturb":
-                case "In_Meeting":
-                    return true;
-            }
-            return false;
         }
 
         private StatusCodeResult InternalServerError()
