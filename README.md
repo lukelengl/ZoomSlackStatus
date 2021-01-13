@@ -72,7 +72,7 @@ This app will update your Slack status when you join a meeting and clear your st
 | `CloudStorageAccountConnectionString` | Connection string of Azure Storage account | `DefaultEndpointsProtocol=...`
 | `InAMeetingStatusEmoji` | The emoji used for status when in a meeting |`:speech_balloon:`
 | `InAMeetingStatusText` | The text used for status when in a meeting |`In a Zoom Meeting`
-| `PresentingStatusEmoji` | The emoji used for setatus when in a meeting and screen sharing. | `:movie_camera:`
+| `PresentingStatusEmoji` | The emoji used for status when in a meeting and screen sharing. | `:movie_camera:`
 | `PresentingStatusText` | The text used for status when in a meeting and screen sharing. | `In a Zoom Meeting (screen sharing)`
 
 - Build and publish this project to your Azure Function app.
